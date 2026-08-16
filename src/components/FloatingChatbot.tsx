@@ -172,7 +172,7 @@ Bạn có thể mở trực tiếp **Lineage DAG** hoặc **Impact & Risk** đ�
         <button
           id="floating-copilot-launcher-btn"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 p-4 bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-indigo-500/50 transition-all duration-300 flex items-center gap-2.5 group cursor-pointer border-2 border-white/20"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-indigo-500/50 transition-all duration-300 flex items-center justify-center cursor-pointer border-2 border-white/20"
           aria-label="Open Lineage Copilot Chatbot"
         >
           <div className="relative">
@@ -180,9 +180,6 @@ Bạn có thể mở trực tiếp **Lineage DAG** hoặc **Impact & Risk** đ�
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-indigo-900 rounded-full animate-ping" />
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-indigo-900 rounded-full" />
           </div>
-          <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 font-mono text-xs font-bold pr-1">
-            Lineage Copilot AI
-          </span>
         </button>
       )}
 
@@ -191,7 +188,7 @@ Bạn có thể mở trực tiếp **Lineage DAG** hoặc **Impact & Risk** đ�
         <div 
           className={`fixed z-50 transition-all duration-300 flex flex-col bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-3xl overflow-hidden ${
             isExpanded
-              ? 'bottom-4 right-4 left-4 top-20 sm:left-auto sm:top-auto sm:w-[680px] sm:h-[750px] sm:bottom-6 sm:right-6'
+              ? 'bottom-4 right-4 left-4 top-20 sm:left-auto sm:top-auto sm:w-[680px] sm:h-[750px] sm:max-h-[calc(100vh-120px)] sm:bottom-6 sm:right-6'
               : 'bottom-6 right-6 w-[92vw] sm:w-[460px] h-[600px] max-h-[85vh]'
           }`}
         >

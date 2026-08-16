@@ -85,3 +85,69 @@
   background-color: #a5b4fc !important;
 }
 
+
+/* Custom React Flow Controls Styling to avoid plain white and improve visibility */
+.react-flow__controls {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  padding: 4px !important;
+}
+
+.react-flow__controls-button {
+  background-color: #0f172a !important; /* dark slate-900 bg */
+  color: #ffffff !important; /* white icon */
+  border: 1px solid #1e293b !important; /* border */
+  border-radius: 8px !important;
+  margin: 1px !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #4f46e5 !important; /* indigo-600 bg */
+  color: #ffffff !important;
+  border-color: #4f46e5 !important;
+  transform: scale(1.05);
+}
+
+.react-flow__controls-button svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.dark .react-flow__controls-button {
+  background-color: #020617 !important; /* slate-950 bg */
+  color: #ffffff !important;
+  border: 1px solid #0f172a !important;
+}
+
+.dark .react-flow__controls-button:hover {
+  background-color: #6366f1 !important; /* indigo-500 bg */
+  color: #ffffff !important;
+  border-color: #6366f1 !important;
+}
+
+/* Custom styling for the Reset Positions control button icon */
+.react-flow__controls-button.reset-position-button svg {
+  fill: none !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.dark .react-flow__controls-button.reset-position-button svg {
+  fill: none !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.react-flow__controls-button.reset-position-button:hover svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
