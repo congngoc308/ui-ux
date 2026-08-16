@@ -416,7 +416,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     });
 
     const isCompactMode = mode === 'compact';
-    const xSpacing = isCompactMode ? 340 : 380;
+    const xSpacing = isCompactMode ? 340 : 550;
     const gap = 35;
 
     // Helper to calculate height of a node dynamically based on actual column count to prevent overlapping

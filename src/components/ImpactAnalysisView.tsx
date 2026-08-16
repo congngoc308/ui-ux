@@ -155,17 +155,6 @@ export const ImpactAnalysisView: React.FC<ImpactAnalysisViewProps> = ({
               <Eye className="w-4 h-4" />
               <span>Xem trên Lineage Graph</span>
             </button>
-            <button
-              id="approve-change-btn"
-              onClick={() => {
-                setIsApproveModalOpen(true);
-                setNewColumnName(operation === 'rename_column' ? selectedColumn || (targetNode?.columns[0]?.name || '') + '_new' : '');
-              }}
-              className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Duyệt &amp; Áp dụng</span>
-            </button>
           </div>
         )}
       </div>

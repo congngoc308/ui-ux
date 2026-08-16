@@ -25,7 +25,7 @@ export default function App() {
   const [hitlQueue, setHitlQueue] = useState<HITLQueueItem[]>(mockProjectsList[0].hitlQueue);
 
   // Cross-tab interaction states
-  const [targetImpactNodeId, setTargetImpactNodeId] = useState<string>('stg_orders');
+  const [targetImpactNodeId, setTargetImpactNodeId] = useState<string>('');
   const [impactedNodeIds, setImpactedNodeIds] = useState<string[]>([]);
   const [upstreamNodeIds, setUpstreamNodeIds] = useState<string[]>([]);
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -67,6 +67,15 @@ export default function App() {
   const handleSelectNodeInGraph = (nodeId: string) => {
     setTargetImpactNodeId(nodeId);
     setActiveTab('explorer');
+  };
+
+  const handleTabChange = (tab: TabType) => {
+    if (tab === 'explorer') {
+      setTargetImpactNodeId('');
+      setImpactedNodeIds([]);
+      setUpstreamNodeIds([]);
+    }
+    setActiveTab(tab);
   };
 
   // HITL Decision Handlers
@@ -272,7 +281,7 @@ export default function App() {
       {/* Left Vertical Collapsible Sidebar */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
         projects={mockProjectsList}
@@ -292,7 +301,7 @@ export default function App() {
               edges={edges}
               hitlQueue={hitlQueue}
               projectName={currentProject.name}
-              onNavigateTab={setActiveTab}
+              onNavigateTab={handleTabChange}
               onSelectNodeInGraph={handleSelectNodeInGraph}
               onAnalyzeImpactForNode={handleAnalyzeImpact}
               onConfirmHITLEdge={handleConfirmHITLEdge}
@@ -306,7 +315,7 @@ export default function App() {
               edges={edges}
               darkMode={darkMode}
               onAnalyzeImpact={handleAnalyzeImpact}
-              onOpenHITL={() => setActiveTab('hitl')}
+              onOpenHITL={() => handleTabChange('hitl')}
               selectedNodeId={targetImpactNodeId}
               impactedNodeIds={impactedNodeIds}
               upstreamNodeIds={upstreamNodeIds}
@@ -339,7 +348,7 @@ export default function App() {
           {activeTab === 'ingest' && (
             <SqlIngestScanner
               onIngestSuccess={handleIngestSuccess}
-              onNavigateToGraph={() => setActiveTab('explorer')}
+              onNavigateToGraph={() => handleTabChange('explorer')}
             />
           )}
 
@@ -381,7 +390,7 @@ export default function App() {
           setTargetImpactNodeId(id);
           setActiveTab('impact');
         }}
-        onNavigateTab={(tab) => setActiveTab(tab as TabType)}
+        onNavigateTab={(tab) => handleTabChange(tab as TabType)}
       />
     </div>
   );
