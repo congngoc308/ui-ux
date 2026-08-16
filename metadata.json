@@ -1,0 +1,6 @@
+{
+  "name": "DATA-04 — Lineage AI",
+  "description": "Enterprise Data Lineage & Automated Impact Analysis platform with Parser-first (sqlglot) + LLM Fallback and Human-in-the-loop (HITL) validation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
