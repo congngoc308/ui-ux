@@ -83,7 +83,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
     {
       id: 'card-assets',
       title: 'Total Data Assets',
-      subtitle: 'Phân tầng qua 7 lớp kiến trúc dữ liệu',
+      subtitle: 'Phân tầng qua 7 lớp kiến trúc',
       value: totalAssets,
       icon: Database,
       color: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/60 hover:border-indigo-500',
@@ -92,43 +92,34 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
     {
       id: 'card-columns',
       title: 'Schema Columns',
-      subtitle: 'Theo dõi chi tiết cấp trường (Column-Level)',
+      subtitle: 'Theo dõi chi tiết cấp trường',
       value: totalCols,
       icon: Table,
       color: 'text-cyan-500 bg-cyan-50 dark:bg-cyan-950/60 hover:border-cyan-500',
       targetTab: 'catalog'
     },
     {
+      id: 'card-rows',
+      title: 'Total Data Rows',
+      subtitle: 'Tổng số bản ghi trong hồ dữ liệu',
+      value: totalRowsCount.toLocaleString(),
+      icon: Server,
+      color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/60 hover:border-amber-500',
+      targetTab: 'catalog'
+    },
+    {
       id: 'card-edges',
       title: 'Lineage Edges',
-      subtitle: 'Liên kết phụ thuộc DAG trong hồ dữ liệu',
+      subtitle: 'Mối quan hệ liên kết trong DAG',
       value: totalEdges,
       icon: GitBranch,
       color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 hover:border-emerald-500',
       targetTab: 'explorer'
     },
     {
-      id: 'card-ast-rate',
-      title: 'Pure AST Accuracy',
-      subtitle: 'Tỷ lệ quan hệ xác thực 100% bằng sqlglot',
-      value: `${astRate}%`,
-      icon: Cpu,
-      color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/60 hover:border-amber-500',
-      targetTab: 'ingest'
-    },
-    {
-      id: 'card-consumers',
-      title: 'Protected Endpoints',
-      subtitle: 'Dashboard Tableau, PowerBI & Feature Store',
-      value: biConsumersCount,
-      icon: Activity,
-      color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/60 hover:border-purple-500',
-      targetTab: 'impact'
-    },
-    {
       id: 'card-hitl',
       title: 'HITL Review Queue',
-      subtitle: 'Liên kết AI suy luận cần kỹ sư dữ liệu duyệt',
+      subtitle: 'Liên kết cần kỹ sư xác nhận',
       value: pendingHitlCount,
       icon: AlertTriangle,
       color: 'text-rose-500 bg-rose-50 dark:bg-rose-950/60 hover:border-rose-500',
@@ -181,22 +172,12 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [nodes]);
 
-  // 4. Critical Hub Nodes
-  const topCriticalNodes = useMemo(() => {
-    return nodes
-      .map(node => {
-        const directDownstream = edges.filter(e => e.source === node.id).length;
-        const directUpstream = edges.filter(e => e.target === node.id).length;
-        return {
-          node,
-          downstream: directDownstream,
-          upstream: directUpstream,
-          risk: directDownstream >= 3 ? 'High' : directDownstream >= 1 ? 'Medium' : 'Low'
-        };
-      })
-      .sort((a, b) => b.downstream - a.downstream)
-      .slice(0, 5);
-  }, [nodes, edges]);
+  // 4. Total Data Rows Table Data
+  const totalRowsTableData = useMemo(() => {
+    return [...nodes]
+      .filter(n => n.type === 'table' || n.rowCount !== undefined)
+      .sort((a, b) => (b.rowCount || 0) - (a.rowCount || 0));
+  }, [nodes]);
 
   // 5. Quality SLA by Layer
   const qualityByLayer = useMemo(() => {
@@ -236,7 +217,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
           </h1>
           
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Hệ thống quản trị và kiểm soát luồng dữ liệu hợp nhất kết hợp bộ phân tích cú pháp <strong className="text-white">AST (sqlglot)</strong> chính xác tuyệt đối, suy luận <strong className="text-white">AI Fallback (Gemini/GPT)</strong> và cơ chế kiểm duyệt chuyên gia <strong className="text-white">Human-in-the-Loop (HITL)</strong>.
+            Hệ thống quản trị luồng dữ liệu kết hợp phân tích cú pháp AST (sqlglot), suy luận AI Fallback và kiểm duyệt chuyên gia (HITL).
           </p>
         </div>
 
@@ -271,7 +252,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {metricCards.map((card) => {
             return (
               <div 
@@ -406,18 +387,18 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
               <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
                 {astRate}%
               </span>
-              <span className="text-[10px] font-mono text-slate-400">Chính xác AST</span>
+              <span className="text-[10px] font-mono text-slate-400">Độ chính xác AST</span>
             </div>
           </div>
 
           <div className="flex items-center justify-around text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span>AST Pure ({parserEdgesCount})</span>
+              <span>AST ({parserEdgesCount})</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span>LLM Fallback ({llmEdgesCount})</span>
+              <span>AI Fallback ({llmEdgesCount})</span>
             </div>
           </div>
         </div>
@@ -471,179 +452,75 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
 
       </div>
 
-      {/* 4. Critical Blast-Radius Hubs & Layer Quality Density */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left 2 Cols: Critical Dependency Hubs & Blast Radius */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Flame className="w-4 h-4 text-rose-500" />
-                <span>Critical Dependency Hubs &amp; Blast Radius</span>
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Các bảng dữ liệu có bán kính ảnh hưởng lớn nhất. Thay đổi schema tại các nút này sẽ tác động dây chuyền đến các báo cáo hạ nguồn.
-              </p>
-            </div>
-            <button
-              onClick={() => onNavigateTab('impact')}
-              className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              <span>Ma trận Rủi ro</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+      {/* 4. Layer Quality & Density */}
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-mono text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span>Layer Quality &amp; Density</span>
+            </h3>
           </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+            Điểm chất lượng trung bình theo tầng dữ liệu.
+          </p>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400">
-                  <th className="py-2.5 px-3">Tên tài sản dữ liệu</th>
-                  <th className="py-2.5 px-3">Schema &amp; Tầng</th>
-                  <th className="py-2.5 px-3">Ảnh hưởng hạ nguồn</th>
-                  <th className="py-2.5 px-3">Chất lượng SLA</th>
-                  <th className="py-2.5 px-3 text-right">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {topCriticalNodes.map(({ node, downstream, upstream, risk }) => (
-                  <tr key={node.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="py-3 px-3">
-                      <div className="font-mono font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span>{node.name}</span>
-                        {node.type === 'table' ? (
-                          <span className="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.2 rounded font-sans">table</span>
-                        ) : (
-                          <span className="text-[9px] bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 px-1.5 py-0.2 rounded font-sans">view</span>
-                        )}
-                      </div>
-                      <div className="text-[11px] text-slate-400 line-clamp-1">{node.description}</div>
-                    </td>
-
-                    <td className="py-3 px-3 font-mono">
-                      <div className="text-slate-700 dark:text-slate-300">{node.schema}</div>
-                      <div className="text-[10px] text-slate-400 uppercase">{node.layer.replace('_', ' ')}</div>
-                    </td>
-
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          risk === 'High' 
-                            ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300' 
-                            : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
-                        }`}>
-                          {downstream} Điểm tiêu thụ
-                        </span>
-                        <span className="text-[10px] text-slate-400">({upstream} nguồn)</span>
-                      </div>
-                    </td>
-
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                        <span>{node.qualityScore || 99.5}%</span>
-                      </div>
-                      <div className="text-[10px] text-slate-400">{node.freshness || 'Hàng ngày'}</div>
-                    </td>
-
-                    <td className="py-3 px-3 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => onAnalyzeImpactForNode(node)}
-                          className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900 text-amber-700 dark:text-amber-300 rounded-lg text-xs font-semibold flex items-center gap-1 border border-amber-200 dark:border-amber-800 cursor-pointer transition-colors"
-                          title="Mô phỏng rủi ro phá vỡ schema"
-                        >
-                          <Zap className="w-3 h-3" />
-                          <span>Mô phỏng</span>
-                        </button>
-                        <button
-                          onClick={() => onSelectNodeInGraph(node.id)}
-                          className="p-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
-                          title="Xem trên đồ thị DAG"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="h-52 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={qualityByLayer} margin={{ top: 10, right: 10, left: -25, bottom: 20 }}>
+                <XAxis dataKey="layer" tick={{ fontSize: 9, fill: '#94a3b8' }} angle={-25} textAnchor="end" />
+                <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} domain={[90, 100]} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#0f172a', 
+                    borderRadius: '12px', 
+                    border: '1px solid #334155',
+                    color: '#f8fafc',
+                    fontSize: '12px'
+                  }} 
+                />
+                <Bar dataKey="avgQuality" name="Chất lượng" fill="#10b981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Right 1 Col: Layer Quality & Density */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between">
+        <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs flex items-center justify-between">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-mono text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                <span>Layer Quality &amp; Density</span>
-              </h3>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
-              Điểm chất lượng dữ liệu trung bình theo từng tầng kiến trúc hồ dữ liệu:
-            </p>
-
-            <div className="h-52 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={qualityByLayer} margin={{ top: 10, right: 10, left: -25, bottom: 20 }}>
-                  <XAxis dataKey="layer" tick={{ fontSize: 9, fill: '#94a3b8' }} angle={-25} textAnchor="end" />
-                  <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} domain={[90, 100]} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderRadius: '12px', 
-                      border: '1px solid #334155',
-                      color: '#f8fafc',
-                      fontSize: '12px'
-                    }} 
-                  />
-                  <Bar dataKey="avgQuality" name="Chất lượng (%)" fill="#10b981" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs flex items-center justify-between">
-            <div>
-              <span className="font-mono font-bold text-slate-800 dark:text-slate-200 block">
-                Tổng số hàng dữ liệu
-              </span>
-              <span className="text-[11px] text-slate-400">Đang giám sát thời gian thực</span>
-            </div>
-            <span className="text-base font-mono font-bold text-indigo-600 dark:text-indigo-400">
-              {totalRowsCount.toLocaleString()}
+            <span className="font-mono font-bold text-slate-800 dark:text-slate-200 block">
+              Tổng số bản ghi
             </span>
+            <span className="text-[11px] text-slate-400">Giám sát thời gian thực</span>
           </div>
+          <span className="text-base font-mono font-bold text-indigo-600 dark:text-indigo-400">
+            {totalRowsCount.toLocaleString()}
+          </span>
         </div>
-
       </div>
 
       {/* 5. Quick HITL Review Center (Actionable Queue) */}
       {pendingHitlCount > 0 && (
-        <div className="bg-gradient-to-br from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 rounded-3xl p-6 shadow-md text-white space-y-4">
+        <div className="bg-gradient-to-br from-orange-500/10 via-slate-900 to-slate-900 border border-orange-500/30 rounded-3xl p-6 shadow-md text-white space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              <span className="p-2.5 rounded-2xl bg-orange-500/20 text-orange-400 border border-orange-500/30">
                 <AlertTriangle className="w-5 h-5" />
               </span>
               <div>
                 <h3 className="text-sm font-bold text-white">
-                  Human-in-the-Loop Review: {pendingHitlCount} Liên kết cần phê duyệt
+                  Duyệt HITL: {pendingHitlCount} liên kết
                 </h3>
                 <p className="text-xs text-slate-300">
-                  Các liên kết được AI phát hiện trong Dynamic SQL hoặc Jinja Macros cần xác nhận của kỹ sư dữ liệu.
+                  Liên kết AI đề xuất trong Dynamic SQL/Jinja cần kiểm duyệt.
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => onNavigateTab('hitl')}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow cursor-pointer self-start sm:self-auto transition-all"
+              className="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow cursor-pointer self-start sm:self-auto transition-all"
             >
-              <span>Xem toàn bộ hàng đợi</span>
+              <span>Xem hàng đợi</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -658,7 +535,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
                   <div className="font-mono font-bold text-slate-200 truncate">
                     `{item.sourceTable}` &rarr; `{item.targetTable}`
                   </div>
-                  <span className="text-[10px] text-amber-400 bg-amber-950 px-2 py-0.5 rounded border border-amber-800 shrink-0">
+                  <span className="text-[10px] text-orange-400 bg-orange-950/80 px-2 py-0.5 rounded border border-orange-900 shrink-0">
                     Độ tin cậy: {(item.confidence * 100).toFixed(0)}%
                   </span>
                 </div>
@@ -674,10 +551,10 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
                   </button>
                   <button
                     onClick={() => onConfirmHITLEdge(item)}
-                    className="px-3.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1"
+                    className="px-3.5 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1"
                   >
                     <Check className="w-3 h-3" />
-                    <span>Xác nhận &amp; Lưu</span>
+                    <span>Phê duyệt</span>
                   </button>
                 </div>
               </div>

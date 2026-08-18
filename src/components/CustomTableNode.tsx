@@ -41,6 +41,7 @@ export interface AffectedColumnInfo {
 interface CustomTableNodeProps {
   data: LineageNodeData & {
     viewMode?: LineageViewMode;
+    layoutDirection?: 'LR' | 'TB';
     isHighlighted?: boolean;
     isImpacted?: boolean;
     isUpstream?: boolean;
@@ -189,12 +190,14 @@ export const CustomTableNode = memo(({ data, selected }: CustomTableNodeProps) =
       onClick={() => data.onInspect?.(data)}
       className={`group ${widthClass} ${dimClass} rounded-2xl bg-white dark:bg-slate-900 border ${containerBorder} ${containerGlow} shadow-sm hover:shadow-xl transition-all duration-200 select-none text-left relative cursor-pointer`}
     >
-      {/* Target input handle (Left) */}
+      {/* Target input handle (Left or Top) */}
       <Handle
         type="target"
-        position={Position.Left}
+        position={data.layoutDirection === 'TB' ? Position.Top : Position.Left}
         id="in"
-        className="!w-3 !h-3 !-left-1.5 !bg-slate-400 dark:!bg-slate-600 group-hover:!bg-indigo-500 transition-colors border-2 border-white dark:border-slate-900"
+        className={`!w-3 !h-3 !bg-slate-400 dark:!bg-slate-600 group-hover:!bg-indigo-500 transition-colors border-2 border-white dark:border-slate-900 ${
+          data.layoutDirection === 'TB' ? '!-top-1.5 !left-1/2 -translate-x-1/2' : '!-left-1.5 !top-1/2 -translate-y-1/2'
+        }`}
       />
 
       {/* Top Atlan Asset Header Bar */}
@@ -422,7 +425,7 @@ export const CustomTableNode = memo(({ data, selected }: CustomTableNodeProps) =
             </button>
           </div>
 
-          <div className="space-y-1 max-h-[170px] overflow-y-auto pr-0.5">
+          <div className={`space-y-1 ${isExpanded ? 'max-h-none overflow-y-visible' : 'max-h-[170px] overflow-y-auto'} pr-0.5`}>
             {(isExpanded ? data.columns : data.columns.slice(0, 4)).map((col, idx) => {
               const isSelectedCol = data.selectedColumnName === col.name;
               return (
@@ -578,12 +581,14 @@ export const CustomTableNode = memo(({ data, selected }: CustomTableNodeProps) =
         </div>
       )}
 
-      {/* Source output handle (Right) */}
+      {/* Source output handle (Right or Bottom) */}
       <Handle
         type="source"
-        position={Position.Right}
+        position={data.layoutDirection === 'TB' ? Position.Bottom : Position.Right}
         id="out"
-        className="!w-3 !h-3 !-right-1.5 !bg-slate-400 dark:!bg-slate-600 group-hover:!bg-indigo-500 transition-colors border-2 border-white dark:border-slate-900"
+        className={`!w-3 !h-3 !bg-slate-400 dark:!bg-slate-600 group-hover:!bg-indigo-500 transition-colors border-2 border-white dark:border-slate-900 ${
+          data.layoutDirection === 'TB' ? '!-bottom-1.5 !left-1/2 -translate-x-1/2' : '!-right-1.5 !top-1/2 -translate-y-1/2'
+        }`}
       />
     </div>
   );

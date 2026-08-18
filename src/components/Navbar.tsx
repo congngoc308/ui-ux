@@ -59,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       label: 'HITL Queue', 
       icon: ShieldCheck, 
       badge: hitlPendingCount > 0 ? `${hitlPendingCount} Review` : null,
-      badgeColor: hitlPendingCount > 0 ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-700'
+      badgeColor: hitlPendingCount > 0 ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-700'
     },
     { id: 'ingest', label: 'SQL Scanner', icon: FileCode, badge: 'sqlglot' },
     { id: 'copilot', label: 'Lineage Copilot', icon: Bot, badge: 'AI' },

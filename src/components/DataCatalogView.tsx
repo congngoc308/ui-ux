@@ -31,23 +31,28 @@ export const DataCatalogView: React.FC<DataCatalogViewProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="space-y-1">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-3xl">
           <div className="flex items-center gap-2">
             <span className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
               <Database className="w-4 h-4" />
             </span>
-            <h2 className="text-lg font-bold font-mono text-slate-900 dark:text-white">
-              Data Catalog &amp; Column Metadata
-            </h2>
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              Governance Hub &bull; Metadata Dictionary
+            </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Data Catalog &amp; Column Metadata
+          </h1>
+          
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
             Từ điển dữ liệu tập trung gồm {nodes.length} bảng và tài sản dữ liệu trải dài từ nguồn (Sources), Staging, Marts đến các báo cáo BI.
           </p>
         </div>
 
         {/* Search & Filter */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 lg:ml-auto">
           <div className="relative">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input

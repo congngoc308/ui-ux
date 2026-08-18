@@ -79,7 +79,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       description: '',
       icon: ShieldCheck, 
       badge: hitlPendingCount > 0 ? hitlPendingCount : null,
-      badgeColor: hitlPendingCount > 0 ? 'bg-amber-500 text-white animate-pulse' : undefined
+      badgeColor: hitlPendingCount > 0 ? 'bg-orange-500 text-white animate-pulse' : undefined
     },
     { 
       id: 'ingest', 
@@ -270,10 +270,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className={`w-full rounded-xl border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/70 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 transition-colors cursor-pointer flex items-center justify-center ${
               isCollapsed ? 'p-2.5' : 'px-3 py-2.5 gap-2 text-xs font-bold text-left'
             }`}
-            title="Xuất CSDL (SQL, CSV, JSON)"
+            title="Export DB & Lineage (SQL, CSV, JSON)"
           >
             <Download className="w-4 h-4 text-indigo-500 shrink-0" />
-            {!isCollapsed && <span>Xuất CSDL / Lineage</span>}
+            {!isCollapsed && <span>Export DB &amp; Lineage</span>}
           </button>
         )}
 
@@ -284,10 +284,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className={`w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer flex items-center justify-center ${
             isCollapsed ? 'p-2.5' : 'px-3 py-2.5 gap-2 text-xs font-bold text-left'
           }`}
-          title="Lineage System Settings"
+          title="System Settings"
         >
           <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
-          {!isCollapsed && <span>Cài đặt hệ thống</span>}
+          {!isCollapsed && <span>System Settings</span>}
         </button>
       </div>
     </aside>

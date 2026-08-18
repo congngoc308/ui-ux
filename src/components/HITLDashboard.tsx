@@ -14,7 +14,9 @@ import {
   Sparkles, 
   RefreshCw,
   Layers,
-  Code
+  Code,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 interface HITLDashboardProps {
@@ -34,6 +36,11 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
 }) => {
   const [editingItem, setEditingItem] = useState<HITLQueueItem | null>(null);
   const [editedMappings, setEditedMappings] = useState<{ sourceCol: string; targetCol: string }[]>([]);
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+
+  const toggleExpandItem = (id: string) => {
+    setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const pendingItems = queue.filter(item => item.status === 'pending');
   const reviewedItems = queue.filter(item => item.status !== 'pending');
@@ -57,19 +64,23 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-2xl border border-slate-800 shadow-xl">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-3xl">
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-orange-500/20 text-orange-400 border border-orange-500/30">
               <ShieldCheck className="w-5 h-5" />
             </span>
-            <h2 className="text-xl font-bold font-mono tracking-tight">
-              Human-in-the-Loop (HITL) Lineage Review Queue
-            </h2>
+            <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
+              Governance Hub &bull; HITL Queue
+            </span>
           </div>
-          <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Khi mã nguồn SQL chứa Dynamic SQL, Jinja macro chưa biên dịch hoặc phép nối chuỗi động, cơ chế LLM Fallback (Gemini) sẽ tự động suy luận quan hệ dữ liệu.
-            Các liên kết có độ tin cậy thấp (&lt; 0.8) được đưa vào hàng đợi phê duyệt HITL tại đây để kỹ sư dữ liệu rà soát trước khi ghi nhận chính thức vào biểu đồ Lineage DAG.
+          
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            Duyệt Lineage
+          </h1>
+          
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Phê duyệt liên kết dữ liệu do AI suy luận trước khi tích hợp vào sơ đồ chính.
           </p>
         </div>
 
@@ -80,57 +91,72 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
               onBatchConfirmAll();
               confetti({ particleCount: 100, spread: 70 });
             }}
-            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-emerald-600/20 transition-all cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#4338ca] hover:bg-[#3730a3] text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-900/20 transition-all cursor-pointer whitespace-nowrap"
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>Phê duyệt tất cả ({pendingItems.length} liên kết)</span>
+            <span>Phê duyệt tất cả ({pendingItems.length})</span>
           </button>
         )}
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono">
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-[11px] text-slate-400 uppercase">Pending Review (Chờ duyệt)</span>
-            <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-              {pendingItems.length}
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Card 1: Pending */}
+        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[11px] font-bold tracking-tight uppercase truncate">
+              Chờ duyệt
+            </span>
           </div>
-          <AlertCircle className="w-8 h-8 text-amber-500/30" />
+          <div className="text-2xl font-extrabold text-orange-650 dark:text-orange-400">
+            {pendingItems.length}
+          </div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-tight">
+            Liên kết đang chờ xử lý
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-[11px] text-slate-400 uppercase">Confirmed Lineages (Đã xác nhận)</span>
-            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-              {queue.filter(q => q.status === 'confirmed' || q.status === 'edited').length}
-            </div>
+        {/* Card 2: Confirmed */}
+        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[11px] font-bold tracking-tight uppercase truncate">
+              Đã duyệt
+            </span>
           </div>
-          <CheckCircle2 className="w-8 h-8 text-emerald-500/30" />
+          <div className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
+            {queue.filter(q => q.status === 'confirmed' || q.status === 'edited').length}
+          </div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-tight">
+            Liên kết đã lưu vào sơ đồ
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-[11px] text-slate-400 uppercase">Rejected Hallucinations (Đã từ chối)</span>
-            <div className="text-2xl font-bold text-rose-600 dark:text-rose-400">
-              {queue.filter(q => q.status === 'rejected').length}
-            </div>
+        {/* Card 3: Rejected */}
+        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-[11px] font-bold tracking-tight uppercase truncate">
+              Đã từ chối
+            </span>
           </div>
-          <XCircle className="w-8 h-8 text-rose-500/30" />
+          <div className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
+            {queue.filter(q => q.status === 'rejected').length}
+          </div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-tight">
+            Gợi ý bị từ chối
+          </div>
         </div>
       </div>
 
       {/* Main Review Cards */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {pendingItems.length === 0 ? (
-          <div className="bg-white dark:bg-slate-900 p-12 rounded-2xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
-            <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
+          <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+            <CheckCircle2 className="w-12 h-12 text-purple-500 mx-auto mb-3" />
             <h3 className="text-base font-bold text-slate-900 dark:text-white font-mono">
-              HITL Queue is All Clear!
+              Hàng đợi trống!
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
-              Tất cả các mối quan hệ lineage do LLM suy luận đã được xác nhận và đồng bộ an toàn vào biểu đồ DAG chính thức.
+              Không còn liên kết nào cần phê duyệt.
             </p>
           </div>
         ) : (
@@ -138,7 +164,7 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
             <div
               key={item.id}
               id={`hitl-item-${item.id}`}
-              className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-amber-200 dark:border-amber-900/60 shadow-sm hover:shadow-md transition-all space-y-4"
+              className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all space-y-4"
             >
               {/* Item Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -154,61 +180,81 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
 
                 {/* Confidence Meter Badge */}
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-mono text-slate-400">LLM Confidence:</span>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full font-mono text-xs font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                  <span className="text-[11px] font-mono text-slate-400">Độ tin cậy:</span>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full font-mono text-xs font-bold bg-orange-100 dark:bg-orange-950/80 text-orange-850 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
                     <Bot className="w-3.5 h-3.5" />
-                    {(item.confidence * 100).toFixed(0)}% (Chờ kiểm duyệt)
+                    {(item.confidence * 100).toFixed(0)}% (Chờ duyệt)
                   </div>
                 </div>
               </div>
 
-              {/* Reason & Detected Root Issue */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-400 block text-[10px] font-mono uppercase mb-0.5">
-                    Parser Obstacle (Vấn đề cú pháp)
-                  </span>
-                  <span className="font-semibold text-amber-600 dark:text-amber-400 uppercase font-mono">
-                    {item.detectedIssue.replace('_', ' ')}
-                  </span>
-                </div>
-                <div className="md:col-span-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-                  <span className="text-slate-400 block text-[10px] font-mono uppercase mb-0.5">
-                    LLM Inference Justification (Lý do AI suy luận)
-                  </span>
-                  <span className="text-slate-700 dark:text-slate-300 font-sans">
-                    {item.reason}
-                  </span>
-                </div>
-              </div>
+              {/* Complex details hidden inside Xem chi tiết */}
+              {expandedItems[item.id] && (
+                <div className="space-y-4 animate-slideDown">
+                  {/* Reason & Detected Root Issue */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="text-slate-400 block text-[10px] font-mono uppercase mb-0.5">
+                        Lỗi cú pháp phát hiện
+                      </span>
+                      <span className="font-semibold text-orange-600 dark:text-orange-400 uppercase font-mono">
+                        {item.detectedIssue.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <div className="md:col-span-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="text-slate-400 block text-[10px] font-mono uppercase mb-0.5">
+                        Lý do AI đề xuất
+                      </span>
+                      <span className="text-slate-705 dark:text-slate-300 font-sans leading-relaxed">
+                        {item.reason}
+                      </span>
+                    </div>
+                  </div>
 
-              {/* Problematic SQL / Code Snippet */}
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-1">
-                  <span className="flex items-center gap-1">
-                    <FileCode2 className="w-3.5 h-3.5 text-indigo-400" />
-                    {item.filePath}
-                  </span>
+                  {/* Suggested Column Mappings */}
+                  {item.suggestedColumnMappings && item.suggestedColumnMappings.length > 0 && (
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+                      <span className="text-slate-400 block text-[10px] font-mono uppercase mb-0.5">
+                        Ánh xạ cột đề xuất
+                      </span>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {item.suggestedColumnMappings.map((colMap, idx) => (
+                          <span key={idx} className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-mono text-indigo-650 dark:text-indigo-400">
+                            {colMap.sourceCol} &rarr; {colMap.targetCol}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Problematic SQL / Code Snippet */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                      <span className="flex items-center gap-1">
+                        <FileCode2 className="w-3.5 h-3.5 text-indigo-400" />
+                        {item.filePath}
+                      </span>
+                    </div>
+                    <pre className="p-3 bg-slate-900 text-slate-200 rounded-xl text-[11px] font-mono overflow-x-auto border border-slate-800 leading-relaxed">
+                      {item.sqlSnippet}
+                    </pre>
+                  </div>
                 </div>
-                <pre className="p-3 bg-slate-900 text-slate-200 rounded-xl text-[11px] font-mono overflow-x-auto border border-slate-800">
-                  {item.sqlSnippet}
-                </pre>
-              </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <div className="text-[11px] text-slate-400 font-mono">
-                  Thời gian tạo: {item.timestamp}
+                  Tạo lúc: {item.timestamp}
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
-                    id={`reject-edge-${item.id}`}
-                    onClick={() => onRejectEdge(item)}
-                    className="px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    onClick={() => toggleExpandItem(item.id)}
+                    className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
-                    <XCircle className="w-3.5 h-3.5" />
-                    <span>Từ chối (Ảo giác AI)</span>
+                    {expandedItems[item.id] ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                    <span>{expandedItems[item.id] ? 'Thu gọn' : 'Chi tiết'}</span>
                   </button>
 
                   <button
@@ -217,16 +263,25 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
                     className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
-                    <span>Chỉnh sửa Mapping</span>
+                    <span>Sửa ánh xạ</span>
+                  </button>
+
+                  <button
+                    id={`reject-edge-${item.id}`}
+                    onClick={() => onRejectEdge(item)}
+                    className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-rose-900/20 cursor-pointer transition-colors"
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    <span>Từ chối</span>
                   </button>
 
                   <button
                     id={`confirm-edge-${item.id}`}
                     onClick={() => handleConfirm(item)}
-                    className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm shadow-emerald-600/20 cursor-pointer transition-colors"
+                    className="px-4 py-1.5 rounded-xl bg-[#4338ca] hover:bg-[#3730a3] text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-indigo-900/20 cursor-pointer transition-colors"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Xác nhận &amp; Lưu vào Graph</span>
+                    <span>Phê duyệt</span>
                   </button>
                 </div>
               </div>
@@ -240,10 +295,10 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 max-w-lg w-full rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
             <h3 className="text-base font-bold font-mono text-slate-900 dark:text-white">
-              Edit Column Lineage Mapping
+              Sửa ánh xạ cột
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Tùy chỉnh liên kết cột nguồn và cột đích cho liên kết: <span className="font-mono font-semibold text-indigo-500">{editingItem.sourceTable} &rarr; {editingItem.targetTable}</span>
+              Chỉnh sửa liên kết giữa các trường của hai bảng.
             </p>
 
             <div className="space-y-2 max-h-56 overflow-y-auto">
@@ -257,7 +312,7 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
                       updated[idx].sourceCol = e.target.value;
                       setEditedMappings(updated);
                     }}
-                    placeholder="Cột nguồn (Source Column)"
+                    placeholder="Cột nguồn"
                     className="flex-1 px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg font-mono text-slate-900 dark:text-white"
                   />
                   <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
@@ -269,7 +324,7 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
                       updated[idx].targetCol = e.target.value;
                       setEditedMappings(updated);
                     }}
-                    placeholder="Cột đích (Target Column)"
+                    placeholder="Cột đích"
                     className="flex-1 px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg font-mono text-slate-900 dark:text-white"
                   />
                 </div>
@@ -279,9 +334,9 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
             <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
               <button
                 onClick={() => setEditingItem(null)}
-                className="px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
+                className="px-3.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition-colors"
               >
-                Hủy bỏ
+                Hủy
               </button>
               <button
                 onClick={() => {
@@ -289,9 +344,9 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
                   setEditingItem(null);
                   confetti({ particleCount: 60 });
                 }}
-                className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer shadow-md shadow-emerald-600/20"
+                className="px-4 py-1.5 text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white rounded-lg cursor-pointer shadow-md shadow-purple-600/20"
               >
-                Lưu &amp; Xác nhận Edge
+                Lưu &amp; Phê duyệt
               </button>
             </div>
           </div>
@@ -303,8 +358,8 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>Audit Logs &amp; Lịch sử Phê Duyệt ({reviewedItems.length} mục)</span>
+              <ShieldCheck className="w-4 h-4 text-orange-500" />
+              <span>Lịch sử phê duyệt ({reviewedItems.length})</span>
             </h3>
           </div>
           
@@ -317,11 +372,11 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                      item.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' :
-                      item.status === 'edited' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300' :
-                      'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
+                      item.status === 'confirmed' ? 'bg-purple-950 text-purple-300 border border-purple-800/40' :
+                      item.status === 'edited' ? 'bg-indigo-950 text-indigo-300 border border-indigo-800/40' :
+                      'bg-rose-955/60 text-rose-350 border border-rose-955/40'
                     }`}>
-                      {item.status.toUpperCase()}
+                      {item.status === 'confirmed' ? 'XÁC NHẬN' : item.status === 'edited' ? 'ĐÃ SỬA' : 'TỪ CHỐI'}
                     </span>
                     <span className="font-semibold text-slate-850 dark:text-slate-205">
                       {item.sourceTable} {item.targetTable !== 'N/A' && `→ ${item.targetTable}`}

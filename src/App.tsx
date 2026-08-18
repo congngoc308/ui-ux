@@ -30,6 +30,7 @@ export default function App() {
   const [upstreamNodeIds, setUpstreamNodeIds] = useState<string[]>([]);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [layoutDirection, setLayoutDirection] = useState<'LR' | 'TB'>('LR');
 
   // Sync project change
   useEffect(() => {
@@ -319,6 +320,7 @@ export default function App() {
               selectedNodeId={targetImpactNodeId}
               impactedNodeIds={impactedNodeIds}
               upstreamNodeIds={upstreamNodeIds}
+              layoutDirection={layoutDirection}
             />
           )}
 
@@ -377,6 +379,8 @@ export default function App() {
         onClose={() => setIsSettingsOpen(false)}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
+        layoutDirection={layoutDirection}
+        setLayoutDirection={setLayoutDirection}
       />
 
       {/* Floating Chatbot Assistant (Bottom-Right) */}

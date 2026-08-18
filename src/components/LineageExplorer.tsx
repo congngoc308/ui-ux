@@ -57,6 +57,7 @@ interface LineageExplorerProps {
   selectedNodeId?: string;
   impactedNodeIds?: string[];
   upstreamNodeIds?: string[];
+  layoutDirection: 'LR' | 'TB';
 }
 
 const nodeTypes = {
@@ -81,13 +82,14 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
   onOpenHITL,
   selectedNodeId: externalSelectedNodeId,
   impactedNodeIds = [],
-  upstreamNodeIds = []
+  upstreamNodeIds = [],
+  layoutDirection
 }) => {
   // Atlan State Controls
   const [viewMode, setViewMode] = useState<LineageViewMode>('compact');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLayer, setSelectedLayer] = useState<string>('all');
-  const [selectedCertification, setSelectedCertification] = useState<string>('all');
+  const [selectedRelationship, setSelectedRelationship] = useState<string>('all');
 
   // Active column trace (Column-Level Lineage - CLL)
   const [activeTracedColumn, setActiveTracedColumn] = useState<{ nodeId: string; colName: string } | null>(null);
@@ -401,6 +403,32 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     setActiveDrawerTab('overview');
   }, []);
 
+  // Compute active nodes based on selected relationship filter to hide unconnected ones
+  const activeEdgeNodeIds = useMemo(() => {
+    if (selectedRelationship === 'all') return null;
+    const ids = new Set<string>();
+    initialEdgesData.forEach(e => {
+      const isVerified = e.confidence === 1.0 || e.inferredBy === 'sqlglot_parser' || e.inferredBy === 'human_verified';
+      const isPendingHITL = e.status === 'pending_hitl';
+      
+      let matches = false;
+      if (selectedRelationship === 'verified') {
+        matches = isVerified && !isPendingHITL;
+      } else if (selectedRelationship === 'llm') {
+        matches = !isVerified && !isPendingHITL;
+      } else if (selectedRelationship === 'hitl') {
+        matches = isPendingHITL;
+      }
+      
+      if (matches) {
+        ids.add(e.source);
+        ids.add(e.target);
+      }
+    });
+    return ids;
+  }, [initialEdgesData, selectedRelationship]);
+
+
   // Compute Node Positioning (Clean Layer Columns) with Dimming Support
   const computeInitialNodes = useCallback((mode: LineageViewMode) => {
     const layerBuckets: Record<number, LineageNodeData[]> = {
@@ -411,7 +439,11 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
       4: []
     };
 
-    initialNodesData.forEach(n => {
+    const filteredNodesData = activeEdgeNodeIds 
+      ? initialNodesData.filter(n => activeEdgeNodeIds.has(n.id))
+      : initialNodesData;
+
+    filteredNodesData.forEach(n => {
       const col = layerOrder[n.layer] ?? 2;
       layerBuckets[col].push(n);
     });
@@ -419,31 +451,41 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     const isCompactMode = mode === 'compact';
     const xSpacing = isCompactMode ? 340 : 550;
     const gap = 35;
+    const nodeWidth = isCompactMode ? 260 : 300;
 
     // Helper to calculate height of a node dynamically based on actual column count to prevent overlapping
     const getNodeHeight = (item: LineageNodeData) => {
       const isExpanded = expandedNodeIds.has(item.id) || (activeTracedColumn?.nodeId === item.id) || (selectedNode?.id === item.id);
       const columnCount = item.columns.length;
 
+      // Spacing for affected columns when tracing a column (CLL)
+      const affectedCols = nodeAffectedColumns[item.id] || [];
+      const hasAffectedCols = affectedCols.length > 0 && activeTracedColumn?.nodeId !== item.id;
+      const affectedHeight = hasAffectedCols ? (50 + affectedCols.length * 32) : 0;
+
       if (isCompactMode) {
         if (isExpanded) {
-          // Dynamic columns list container height: 28px per column + 20px header, capped at 208px (max-h-52)
-          const colsHeight = Math.min(208, columnCount * 28 + 20);
-          // Base compact collapsed height (135px) + columns container height + padding (15px)
-          return 135 + colsHeight + 15;
+          // Dynamic columns list container height: 32px per column + 24px header, capped at 220px
+          const colsHeight = Math.min(220, columnCount * 32 + 24);
+          // Base compact collapsed height (145px) + columns container height + padding (20px)
+          return 145 + colsHeight + 20 + affectedHeight;
         } else {
-          return 135;
+          return 145 + affectedHeight;
         }
       } else {
         if (isExpanded) {
-          // Dynamic columns list container height: 28px per column, capped at 170px (max-h-[170px])
-          const colsHeight = Math.min(170, columnCount * 28);
-          // Base full height (85px header + 24px label + 40px footer) = 149px + columns height + padding (15px)
-          return 149 + colsHeight + 15;
+          // Dynamic columns list container height: 33px per column (no capping in full mode)
+          const colsHeight = columnCount * 33;
+          // Base full height (header, padding, column titles, and action footer) = ~200px
+          // Let's add 20px extra padding/breathing room to satisfy "các bảng cách nhau 1 khoảng"
+          return 200 + colsHeight + 20 + affectedHeight;
         } else {
           // Collapsed shows up to 4 columns
           const colsCountToShow = Math.min(columnCount, 4);
-          return 149 + (colsCountToShow * 28);
+          const colsHeight = colsCountToShow * 33;
+          // Base full height (header, padding, column titles, and action footer) = ~200px
+          // Plus "+X more columns" text link (~24px)
+          return 200 + colsHeight + 24 + 20 + affectedHeight;
         }
       }
     };
@@ -462,6 +504,25 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     const canvasHeight = Math.max(...Object.values(colHeights), 100);
     const result: Node[] = [];
 
+    // TB Pre-calculations
+    const xGap = 40;
+    const layerWidths: Record<number, number> = {};
+    Object.entries(layerBuckets).forEach(([colStr, items]) => {
+      const col = parseInt(colStr, 10);
+      layerWidths[col] = items.length * nodeWidth + Math.max(0, items.length - 1) * xGap;
+    });
+    const canvasWidth = Math.max(...Object.values(layerWidths), 100);
+
+    const layerYOffset: Record<number, number> = {};
+    const yGap = isCompactMode ? 140 : 200;
+    let accumulatedY = 60;
+    for (let l = 0; l <= 4; l++) {
+      layerYOffset[l] = accumulatedY;
+      const heights = colNodeHeights[l] || [];
+      const maxHeight = heights.length > 0 ? Math.max(...heights) : 0;
+      accumulatedY += maxHeight + yGap;
+    }
+
     Object.entries(layerBuckets).forEach(([colStr, items]) => {
       const col = parseInt(colStr, 10);
       const columnHeight = colHeights[col];
@@ -471,7 +532,16 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
 
       items.forEach((item, index) => {
         const nodeHeight = colNodeHeights[col][index];
-        const yPos = currentY;
+        
+        let xPos = 60 + col * xSpacing;
+        let yPos = currentY;
+
+        if (layoutDirection === 'TB') {
+          const layerWidth = layerWidths[col];
+          const startXOffset = (canvasWidth - layerWidth) / 2;
+          xPos = 60 + startXOffset + index * (nodeWidth + xGap);
+          yPos = layerYOffset[col];
+        }
 
         // Advance currentY for the next node
         currentY += nodeHeight + gap;
@@ -502,12 +572,13 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
           id: item.id,
           type: 'customTable',
           position: {
-            x: 60 + col * xSpacing,
+            x: xPos,
             y: yPos
           },
           data: {
             ...item,
             viewMode: nodeViewMode,
+            layoutDirection,
             isImpacted,
             isUpstream,
             isFocused,
@@ -528,6 +599,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
 
     return result;
   }, [
+    activeEdgeNodeIds,
     initialNodesData, 
     impactedNodeIds, 
     upstreamNodeIds, 
@@ -544,7 +616,8 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     handleSelectColumn,
     expandedNodeIds,
     selectedNode,
-    handleToggleExpandNode
+    handleToggleExpandNode,
+    layoutDirection
   ]);
 
   const initialNodes = useMemo(() => computeInitialNodes(viewMode), [computeInitialNodes, viewMode]);
@@ -552,6 +625,22 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
   // Transform Edges for ReactFlow with Green (Verified) and Orange (LLM) flow animations
   // When activeTracedColumn is active, direct connections go from clicked column to compact tables!
   const initialEdges: Edge[] = useMemo(() => {
+    // Filter initial edges data based on the relationship status filter
+    const filteredEdgesData = initialEdgesData.filter(e => {
+      if (selectedRelationship === 'all') return true;
+      const isVerified = e.confidence === 1.0 || e.inferredBy === 'sqlglot_parser' || e.inferredBy === 'human_verified';
+      const isPendingHITL = e.status === 'pending_hitl';
+      
+      if (selectedRelationship === 'verified') {
+        return isVerified && !isPendingHITL;
+      } else if (selectedRelationship === 'llm') {
+        return !isVerified && !isPendingHITL;
+      } else if (selectedRelationship === 'hitl') {
+        return isPendingHITL;
+      }
+      return true;
+    });
+
     if (activeTracedColumn && cllEdgesList.length > 0) {
       // 1. Column-to-column connections
       const directCllEdges: Edge[] = cllEdgesList.map(c => {
@@ -594,7 +683,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
       });
 
       // 2. Dimmed background table edges
-      const bgEdges: Edge[] = initialEdgesData.map(e => ({
+      const bgEdges: Edge[] = filteredEdgesData.map(e => ({
         id: `bg-${e.id}`,
         source: e.source,
         target: e.target,
@@ -618,7 +707,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
       return [...directCllEdges, ...bgEdges];
     }
 
-    return initialEdgesData.map(e => {
+    return filteredEdgesData.map(e => {
       const isVerified = e.inferredBy === 'sqlglot_parser' || e.inferredBy === 'human_verified' || e.confidence === 1.0;
       const isPendingHITL = e.status === 'pending_hitl';
       const isImpacted = impactedNodeIds.includes(e.source) && impactedNodeIds.includes(e.target);
@@ -662,6 +751,8 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
         edgeClass = 'animated';
       }
 
+      const strokeDasharray = isPendingHITL ? '5,5' : undefined;
+
       return {
         id: e.id,
         source: e.source,
@@ -674,6 +765,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
           stroke: strokeColor,
           strokeWidth,
           opacity,
+          strokeDasharray,
           transition: 'opacity 0.2s ease, stroke 0.2s ease'
         },
         markerEnd: {
@@ -700,6 +792,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     });
   }, [
     initialEdgesData, 
+    selectedRelationship,
     impactedNodeIds, 
     activeTracedColumn, 
     cllEdgesList, 
@@ -721,6 +814,16 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
   useEffect(() => {
     setEdges(initialEdges);
   }, [initialEdges, setEdges]);
+
+  // Fit viewport automatically when layoutDirection or relationship filter changes
+  useEffect(() => {
+    if (rfInstance) {
+      const timer = setTimeout(() => {
+        rfInstance.fitView({ duration: 600, padding: 0.15 });
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [layoutDirection, selectedRelationship, rfInstance]);
 
   // Handler: Reset layout / node positions to default
   const handleResetPositions = useCallback(() => {
@@ -752,7 +855,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     setExpandedNodeIds(new Set());
   }, []);
 
-  // Filtered nodes (Search, Layer, Certification)
+  // Filtered nodes (Search, Layer)
   const filteredNodes = useMemo(() => {
     return nodes.filter(node => {
       const data = node.data as unknown as LineageNodeData;
@@ -767,13 +870,9 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
       // Layer Filter
       const matchesLayer = selectedLayer === 'all' || data.layer === selectedLayer;
 
-      // Certification Filter
-      const certification = data.certification || (data.qualityScore && data.qualityScore > 98 ? 'VERIFIED' : 'DRAFT');
-      const matchesCertification = selectedCertification === 'all' || certification === selectedCertification;
-
-      return matchesSearch && matchesLayer && matchesCertification;
+      return matchesSearch && matchesLayer;
     });
-  }, [nodes, searchTerm, selectedLayer, selectedCertification]);
+  }, [nodes, searchTerm, selectedLayer]);
 
   // Click on node in graph
   const onNodeClick = useCallback((_: any, node: Node) => {
@@ -857,18 +956,18 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
           )}
         </div>
 
-        {/* Certification Filter */}
+        {/* Relationship Status Filter */}
         <div className="hidden sm:flex items-center">
           <select
-            id="explorer-cert-filter"
-            value={selectedCertification}
-            onChange={(e) => setSelectedCertification(e.target.value)}
-            className="py-1.5 px-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 cursor-pointer focus:outline-none"
+            id="explorer-relationship-filter"
+            value={selectedRelationship}
+            onChange={(e) => setSelectedRelationship(e.target.value)}
+            className="py-1.5 px-2.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 cursor-pointer focus:outline-none font-mono"
           >
-            <option value="all">Cert: All Status</option>
-            <option value="VERIFIED">✅ Verified Only</option>
-            <option value="DRAFT">🟡 Draft / Under Review</option>
-            <option value="DEPRECATED">⚠️ Deprecated</option>
+            <option value="all">All Status</option>
+            <option value="verified">🟢 Verified Flow</option>
+            <option value="llm">🟠 LLM Generated</option>
+            <option value="hitl">🟠--- HITL Queue</option>
           </select>
         </div>
       </div>
@@ -902,18 +1001,22 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
       )}
 
       {/* 3. Atlan Bottom Legend & Status Bar */}
-      <div className="absolute bottom-4 left-[80px] z-20 flex flex-wrap items-center gap-3 px-3.5 py-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-2xl border border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300 shadow-md">
+      <div className="absolute bottom-4 left-[80px] z-20 flex flex-wrap items-center gap-4 px-3.5 py-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-2xl border border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300 shadow-md">
         <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1">
           <Info className="w-3.5 h-3.5 text-indigo-500" />
           <span>Lineage Flow:</span>
         </span>
-        <div className="flex items-center gap-1.5" title="Đường kết nối màu xanh lá biểu thị luồng dữ liệu đã được Parser sqlglot/Kỹ sư dữ liệu xác thực (100%)">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />
-          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Verified Flow (Xanh lá)</span>
+        <div className="flex items-center gap-2" title="Đường kết nối màu xanh lá biểu thị luồng dữ liệu đã được Parser sqlglot/Kỹ sư dữ liệu xác thực (100%)">
+          <span className="w-6 h-[3px] bg-emerald-500 rounded-full shadow-sm shadow-emerald-500/50 inline-block" />
+          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Verified Flow</span>
         </div>
-        <div className="flex items-center gap-1.5" title="Đường kết nối màu cam biểu thị luồng suy luận tự động bởi Gemini LLM">
-          <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50" />
-          <span className="text-orange-600 dark:text-orange-400 font-semibold">LLM Generated (Cam)</span>
+        <div className="flex items-center gap-2" title="Đường kết nối màu cam biểu thị luồng suy luận tự động bởi Gemini LLM">
+          <span className="w-6 h-[3px] bg-orange-500 rounded-full shadow-sm shadow-orange-500/50 inline-block" />
+          <span className="text-orange-600 dark:text-orange-400 font-semibold">LLM Generated</span>
+        </div>
+        <div className="flex items-center gap-2" title="Đường đứt nét màu cam biểu thị luồng đang chờ xác thực HITL">
+          <span className="w-6 h-0 border-t-2 border-dashed border-orange-500 inline-block" />
+          <span className="text-orange-600 dark:text-orange-400 font-semibold">HITL Queue</span>
         </div>
         {isFocusMode && (
           <div className="flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-700">

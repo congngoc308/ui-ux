@@ -364,17 +364,22 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
       />
 
       {/* Main Header: Clearly state this tab converts Database/SQL into Lineage */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2.5">
-            <span className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-3xl">
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
               <Database className="w-5 h-5" />
             </span>
-            <h2 className="text-xl font-bold font-mono tracking-tight">
-              Chuyển đổi Database &amp; SQL thành Lineage DAG
-            </h2>
+            <span className="text-[11px] font-semibold text-indigo-300 uppercase tracking-wider">
+              Governance Hub &bull; Ingestion SQL Engine
+            </span>
           </div>
-          <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+          
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            Chuyển đổi Database &amp; SQL thành Lineage DAG
+          </h1>
+          
+          <p className="text-xs sm:text-sm text-slate-350 leading-relaxed">
             Nạp các file SQL / dbt model hoặc dán câu lệnh truy vấn để <strong className="text-indigo-300 font-semibold">tự động chuyển đổi cơ sở dữ liệu thành sơ đồ Lineage DAG</strong> trực quan với đầy đủ quan hệ upstream, downstream và metadata.
           </p>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   Settings, 
@@ -20,24 +20,38 @@ interface SettingsModalProps {
   onClose: () => void;
   darkMode: boolean;
   setDarkMode: (val: boolean) => void;
+  layoutDirection: 'LR' | 'TB';
+  setLayoutDirection: (val: 'LR' | 'TB') => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
   darkMode,
-  setDarkMode
+  setDarkMode,
+  layoutDirection,
+  setLayoutDirection
 }) => {
-  const [layoutDirection, setLayoutDirection] = useState<'LR' | 'TB'>('LR');
+  const [localDarkMode, setLocalDarkMode] = useState<boolean>(darkMode);
+  const [localLayoutDirection, setLocalLayoutDirection] = useState<'LR' | 'TB'>(layoutDirection);
   const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.80);
   const [enableLLMFallback, setEnableLLMFallback] = useState<boolean>(true);
   const [enableCLLAnimations, setEnableCLLAnimations] = useState<boolean>(true);
   const [edgeStyle, setEdgeStyle] = useState<'smoothstep' | 'bezier'>('smoothstep');
   const [isSaved, setIsSaved] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) {
+      setLocalDarkMode(darkMode);
+      setLocalLayoutDirection(layoutDirection);
+    }
+  }, [isOpen, darkMode, layoutDirection]);
+
   if (!isOpen) return null;
 
   const handleSave = () => {
+    setDarkMode(localDarkMode);
+    setLayoutDirection(localLayoutDirection);
     setIsSaved(true);
     setTimeout(() => {
       setIsSaved(false);
@@ -149,9 +163,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
                 <div className="flex items-center gap-1 bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
                   <button
-                    onClick={() => setLayoutDirection('LR')}
+                    onClick={() => setLocalLayoutDirection('LR')}
                     className={`px-2.5 py-1 rounded font-mono font-bold text-xs transition-colors cursor-pointer ${
-                      layoutDirection === 'LR' 
+                      localLayoutDirection === 'LR' 
                         ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm' 
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
@@ -159,9 +173,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     Left → Right
                   </button>
                   <button
-                    onClick={() => setLayoutDirection('TB')}
+                    onClick={() => setLocalLayoutDirection('TB')}
                     className={`px-2.5 py-1 rounded font-mono font-bold text-xs transition-colors cursor-pointer ${
-                      layoutDirection === 'TB' 
+                      localLayoutDirection === 'TB' 
                         ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm' 
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
@@ -221,9 +235,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setDarkMode(false)}
+                onClick={() => setLocalDarkMode(false)}
                 className={`flex-1 p-3 rounded-xl border flex items-center justify-center gap-2 font-mono font-bold transition-all cursor-pointer ${
-                  !darkMode 
+                  !localDarkMode 
                     ? 'border-indigo-500 bg-indigo-50/50 text-indigo-700 dark:text-indigo-300 ring-2 ring-indigo-500/20' 
                     : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
@@ -233,9 +247,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </button>
 
               <button
-                onClick={() => setDarkMode(true)}
+                onClick={() => setLocalDarkMode(true)}
                 className={`flex-1 p-3 rounded-xl border flex items-center justify-center gap-2 font-mono font-bold transition-all cursor-pointer ${
-                  darkMode 
+                  localDarkMode 
                     ? 'border-indigo-500 bg-indigo-950/40 text-indigo-400 ring-2 ring-indigo-500/20' 
                     : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}

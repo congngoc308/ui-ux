@@ -172,13 +172,13 @@ Bạn có thể mở trực tiếp **Lineage DAG** hoặc **Impact & Risk** đ�
         <button
           id="floating-copilot-launcher-btn"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-indigo-500/50 transition-all duration-300 flex items-center justify-center cursor-pointer border-2 border-white/20"
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-500 text-white rounded-full shadow-2xl hover:scale-110 hover:shadow-indigo-500/50 transition-all duration-300 flex items-center justify-center cursor-pointer border-2 border-white/20"
           aria-label="Open Lineage Copilot Chatbot"
         >
           <div className="relative">
-            <Bot className="w-6 h-6 animate-bounce" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-indigo-900 rounded-full animate-ping" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 border-2 border-indigo-900 rounded-full" />
+            <Bot className="w-5 h-5 animate-bounce" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border border-indigo-900 rounded-full animate-ping" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border border-indigo-900 rounded-full" />
           </div>
         </button>
       )}

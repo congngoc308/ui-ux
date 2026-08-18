@@ -117,17 +117,22 @@ export const ImpactAnalysisView: React.FC<ImpactAnalysisViewProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white p-6 rounded-2xl border border-slate-800 shadow-xl">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-3xl">
+          <div className="flex items-center gap-2">
             <span className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30">
               <Zap className="w-5 h-5" />
             </span>
-            <h2 className="text-xl font-bold font-mono tracking-tight">
-              Automated Impact Analysis &amp; Blast Radius Engine
-            </h2>
+            <span className="text-[11px] font-semibold text-indigo-300 uppercase tracking-wider">
+              Governance Hub &bull; Blast Radius Engine
+            </span>
           </div>
-          <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+          
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            Automated Impact Analysis &amp; Blast Radius Engine
+          </h1>
+          
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
             Mô phỏng bán kính ảnh hưởng lan truyền khi sửa đổi hoặc xoá bảng/cột dữ liệu trước khi tạo Pull Request. 
             Ngăn ngừa sự cố đứt gãy trên các báo cáo BI Dashboard, Feature Store ML và các bảng tổng hợp downstream.
           </p>
