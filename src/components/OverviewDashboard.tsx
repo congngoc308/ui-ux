@@ -141,13 +141,23 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
     }));
   }, [nodes]);
 
-  // 2. Engine Breakdown Chart Data
+  // 2. Engine Breakdown Chart Data (Verified Flow, LLM Generated, HITL Queue)
+  const verifiedFlowCount = useMemo(() => edges.filter(e => e.status !== 'pending_hitl' && (e.inferredBy === 'sqlglot_parser' || e.inferredBy === 'human_verified')).length, [edges]);
+  const llmGeneratedCount = useMemo(() => edges.filter(e => e.status !== 'pending_hitl' && (e.inferredBy === 'gemini_llm' || e.inferredBy === 'gpt4o_mini')).length, [edges]);
+  const hitlQueueCount = useMemo(() => edges.filter(e => e.status === 'pending_hitl').length, [edges]);
+
   const engineBreakdown = useMemo(() => {
     return [
-      { name: 'Pure AST (sqlglot)', value: parserEdgesCount, color: '#10b981' },
-      { name: 'LLM Fallback (Gemini)', value: llmEdgesCount, color: '#f59e0b' }
+      { name: 'Verified Flow', value: verifiedFlowCount, color: '#10b981' },
+      { name: 'LLM Generated', value: llmGeneratedCount, color: '#6366f1' },
+      { name: 'HITL Queue', value: hitlQueueCount, color: '#f59e0b' }
     ];
-  }, [parserEdgesCount, llmEdgesCount]);
+  }, [verifiedFlowCount, llmGeneratedCount, hitlQueueCount]);
+
+  const verifiedRate = useMemo(() => {
+    const totalInDAG = verifiedFlowCount + llmGeneratedCount + hitlQueueCount;
+    return totalInDAG > 0 ? Math.round((verifiedFlowCount / totalInDAG) * 100) : 0;
+  }, [verifiedFlowCount, llmGeneratedCount, hitlQueueCount]);
 
   // 3. Column Data Types Distribution
   const dataTypeDistribution = useMemo(() => {
@@ -232,11 +242,11 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => onNavigateTab('impact')}
+            onClick={() => onNavigateTab('ingest')}
             className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-2 border border-slate-700 transition-all cursor-pointer"
           >
-            <Zap className="w-4 h-4 text-amber-400" />
-            <span>Mô phỏng Impact</span>
+            <Database className="w-4 h-4 text-indigo-400" />
+            <span>db to lineage</span>
           </button>
         </div>
       </div>
@@ -342,7 +352,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
                   Inference Engine Split
                 </h3>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Tỷ lệ phân giải chính xác bằng AST toán học so với AI Fallback
+                  Tỷ lệ của Verified Flow, LLM Generated và HITL Queue
                 </p>
               </div>
             </div>
@@ -385,20 +395,24 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
             {/* Center Stat */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
-                {astRate}%
+                {verifiedRate}%
               </span>
-              <span className="text-[10px] font-mono text-slate-400">Độ chính xác AST</span>
+              <span className="text-[10px] font-mono text-slate-400">Verified Flow</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-around text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-around text-[10px] sm:text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span>AST ({parserEdgesCount})</span>
+              <span>Verified Flow ({verifiedFlowCount})</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
+              <span>LLM Generated ({llmGeneratedCount})</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span>AI Fallback ({llmEdgesCount})</span>
+              <span>HITL Queue ({hitlQueueCount})</span>
             </div>
           </div>
         </div>
@@ -483,18 +497,6 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-
-        <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs flex items-center justify-between">
-          <div>
-            <span className="font-mono font-bold text-slate-800 dark:text-slate-200 block">
-              Tổng số bản ghi
-            </span>
-            <span className="text-[11px] text-slate-400">Giám sát thời gian thực</span>
-          </div>
-          <span className="text-base font-mono font-bold text-indigo-600 dark:text-indigo-400">
-            {totalRowsCount.toLocaleString()}
-          </span>
         </div>
       </div>
 

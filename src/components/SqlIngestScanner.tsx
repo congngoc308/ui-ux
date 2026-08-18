@@ -376,7 +376,7 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
           </div>
           
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-            Chuyển đổi Database &amp; SQL thành Lineage DAG
+            Database to Lineage Parser
           </h1>
           
           <p className="text-xs sm:text-sm text-slate-350 leading-relaxed">
