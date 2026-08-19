@@ -410,7 +410,7 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
             }`}
           >
             <Upload className="w-4 h-4" />
-            <span>Upload File &amp; Thư mục SQL</span>
+            <span>Upload SQL Files &amp; Folders</span>
             {inputMethod === 'upload' && (
               <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#4338ca] dark:bg-indigo-500 rounded-full" />
             )}
@@ -425,7 +425,7 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
             }`}
           >
             <Code2 className="w-4 h-4" />
-            <span>Dán mã SQL trực tiếp</span>
+            <span>Paste SQL Script</span>
             {inputMethod === 'paste' && (
               <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#4338ca] dark:bg-indigo-500 rounded-full" />
             )}
@@ -451,7 +451,7 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
               </div>
 
               <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100">
-                Kéo thả file .sql vào đây
+                Drag and Drop SQL Files Here
               </h3>
 
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 mb-6 max-w-md">
@@ -483,11 +483,11 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
 
             {/* Uploaded Files Section */}
             {uploadedFiles.length > 0 && (
-              <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 space-y-4">
+              <div className="p-5 rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-700">
                   <div className="flex items-center gap-2 font-mono font-bold text-sm text-slate-800 dark:text-slate-100">
                     <FileCheck className="w-4 h-4 text-emerald-500" />
-                    <span>Đã tải lên {uploadedFiles.length} file SQL</span>
+                    <span>Uploaded SQL Files ({uploadedFiles.length})</span>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -558,26 +558,26 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
             {/* Quick Sample Selector */}
             <div className="flex items-center justify-between flex-wrap gap-2">
               <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                Nhập hoặc chọn mẫu câu lệnh SQL:
+                Select Sample SQL Template or Paste Custom SQL Code
               </span>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setPasteSqlCode(sampleSnippets.stagingModel.sql)}
                   className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-mono text-emerald-600 dark:text-emerald-400 cursor-pointer"
                 >
-                  Mẫu 1: Staging
+                  Template 1: Staging
                 </button>
                 <button
                   onClick={() => setPasteSqlCode(sampleSnippets.intermediateModel.sql)}
                   className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-mono text-amber-600 dark:text-amber-400 cursor-pointer"
                 >
-                  Mẫu 2: Jinja Join
+                  Template 2: Jinja Join
                 </button>
                 <button
                   onClick={() => setPasteSqlCode(sampleSnippets.storedProcedure.sql)}
                   className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-mono text-indigo-600 dark:text-indigo-400 cursor-pointer"
                 >
-                  Mẫu 3: Procedure
+                  Template 3: Stored Procedure
                 </button>
               </div>
             </div>
@@ -618,14 +618,14 @@ export const SqlIngestScanner: React.FC<SqlIngestScannerProps> = ({
 
         {/* Conversion Success Notification & Summary Card */}
         {conversionSuccess && convertedSummary && (
-          <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fadeIn">
+          <div className="p-5 rounded-3xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fadeIn">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/20">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
                 <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-200">
-                  Đã chuyển đổi thành công sang Lineage DAG!
+                  Lineage Graph Converted Successfully!
                 </h4>
                 <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">
                   Đã ghi nhận <strong>{convertedSummary.totalNodes} bảng (Nodes)</strong> và <strong>{convertedSummary.totalEdges} mối quan hệ phụ thuộc (Edges)</strong> vào đồ thị dữ liệu.

@@ -83,7 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     { 
       id: 'ingest', 
-      label: 'Database to Lineage', 
+      label: 'SQL Ingest Scanner', 
       description: '',
       icon: FileCode
     },
@@ -97,12 +97,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`h-screen sticky top-0 z-40 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between transition-all duration-300 select-none shrink-0 ${
-        isCollapsed ? 'w-16 sm:w-20' : 'w-64 sm:w-72'
+      className={`h-screen sticky top-0 z-40 bg-slate-50 dark:bg-slate-950 border-r border-slate-200/80 dark:border-slate-800/80 flex flex-col justify-between transition-all duration-300 select-none shrink-0 ${
+        isCollapsed ? 'w-20' : 'w-72 sm:w-80'
       }`}
     >
       {/* Top Header & Brand */}
-      <div className={`p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 ${isCollapsed ? 'flex justify-center' : ''}`}>
+      <div className={`p-4 border-b border-slate-200/80 dark:border-slate-800/80 ${isCollapsed ? 'flex flex-col items-center gap-4' : ''}`}>
         {isCollapsed ? (
           /* Collapsed Mode: Only Logo is visible, hovering reveals the outward arrow, clicking expands sidebar */
           <div
@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="relative group cursor-pointer"
             title="Nhấn để mở rộng thanh điều hướng"
           >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white transition-all group-hover:scale-105 group-hover:shadow-indigo-500/40">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-md shadow-indigo-500/10 text-white transition-all group-hover:scale-105 group-hover:shadow-indigo-500/25">
               <Network className="w-5 h-5 transition-all duration-200 group-hover:opacity-0 group-hover:scale-75" />
               <ChevronRight className="w-5 h-5 absolute inset-0 m-auto text-white opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200" />
             </div>
@@ -124,8 +124,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="flex items-center gap-3 cursor-pointer overflow-hidden group"
               title="DATA-04 Lineage AI"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white shrink-0 group-hover:scale-105 transition-transform">
-                <Network className="w-5 h-5" />
+              <div className="w-11 h-11 rounded-3xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-md shadow-indigo-500/15 text-white shrink-0 group-hover:scale-105 transition-transform">
+                <Network className="w-5.5 h-5.5" />
               </div>
               
               <div className="min-w-0 transition-opacity duration-200">
@@ -133,7 +133,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span className="font-extrabold text-sm text-slate-900 dark:text-white tracking-tight">
                     DATA-04
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
                     Lineage AI
                   </span>
                 </div>
@@ -143,11 +143,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
 
-            {/* Toggle Sidebar Collapse Button (Collapse to icon only) */}
+            {/* Toggle Sidebar Collapse Button */}
             <button
               id="sidebar-toggle-collapse-btn"
               onClick={() => setIsCollapsed(true)}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+              className="p-2 rounded-full text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-850 transition-colors cursor-pointer shrink-0"
               title="Thu gọn thanh điều hướng"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -157,9 +157,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Project Selector (When Expanded) */}
         {!isCollapsed && (
-          <div className="mt-3 relative">
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-              <FolderGit2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+          <div className="mt-4 relative">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <FolderGit2 className="w-4 h-4 text-indigo-500 shrink-0" />
               <select
                 id="sidebar-project-selector"
                 value={selectedProjectId}
@@ -178,55 +178,87 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Center Navigation List */}
-      <div className="flex-1 overflow-y-auto py-3 px-2 sm:px-3 space-y-1.5 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto py-4 space-y-1.5 custom-scrollbar">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
 
           return (
-            <div key={item.id} className="relative group">
+            <div key={item.id} className="relative group px-3">
               <button
                 id={`sidebar-nav-${item.id}`}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center rounded-2xl transition-all cursor-pointer ${
+                className={`w-full flex transition-all cursor-pointer ${
                   isCollapsed 
-                    ? 'justify-center p-3' 
-                    : 'gap-3 px-3.5 py-2.5 text-left'
+                    ? 'flex-col items-center justify-center py-2' 
+                    : 'flex-row items-center gap-4 px-4 py-3 rounded-full text-left'
                 } ${
-                  isActive
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20 font-semibold'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                  !isCollapsed && isActive
+                    ? 'bg-indigo-100 text-indigo-900 dark:bg-indigo-950 dark:text-indigo-100 font-semibold shadow-sm'
+                    : !isCollapsed
+                      ? 'text-slate-600 dark:text-slate-350 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/40 dark:hover:bg-slate-900/55'
+                      : ''
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
-                <div className="relative shrink-0 flex items-center justify-center">
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-500'}`} />
-                </div>
-
-                {!isCollapsed && (
-                  <div className="flex-1 min-w-0 flex items-center justify-between gap-1.5">
-                    <div className="truncate">
-                      <div className="text-xs font-bold leading-tight">
-                        {item.label}
+                {isCollapsed ? (
+                  <div className="flex flex-col items-center gap-1.5 w-full">
+                    {/* Active Icon Pill container */}
+                    <div className="relative">
+                      <div className={`w-14 h-8 rounded-full flex items-center justify-center transition-all ${
+                        isActive 
+                          ? 'bg-indigo-100 text-indigo-900 dark:bg-indigo-950 dark:text-indigo-100' 
+                          : 'text-slate-500 dark:text-slate-400 group-hover:bg-slate-200/50 dark:group-hover:bg-slate-900/60 group-hover:text-slate-800 dark:group-hover:text-slate-200'
+                      }`}>
+                        <Icon className={`w-5 h-5 transition-transform duration-200 group-hover:scale-105 ${isActive ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400'}`} />
                       </div>
+                      
+                      {/* Badge on top right of the icon pill */}
+                      {item.badge && (
+                        <span
+                          className={`absolute -top-1 -right-1 text-[9px] px-1.5 py-0.2 rounded-full font-bold flex items-center justify-center min-w-[16px] h-4 shadow-sm border border-slate-50 dark:border-slate-950 ${
+                            item.badgeColor || 'bg-orange-500 text-white'
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                    {/* Text Label under the icon */}
+                    <span className={`text-[10.5px] tracking-tight font-medium w-full text-center truncate ${isActive ? 'text-indigo-900 dark:text-indigo-200 font-semibold' : 'text-slate-500 dark:text-slate-400'}`}>
+                      {item.label}
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="relative shrink-0 flex items-center justify-center">
+                      <Icon className={`w-5 h-5 ${isActive ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'}`} />
                     </div>
 
-                    {item.badge && (
-                      <span
-                        className={`text-[9px] px-1.5 py-0.2 rounded-md font-bold shrink-0 ${
-                          item.badgeColor || (isActive ? 'bg-indigo-700 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300')
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </div>
+                    <div className="flex-1 min-w-0 flex items-center justify-between gap-1.5">
+                      <div className="truncate">
+                        <div className="text-xs font-bold leading-tight">
+                          {item.label}
+                        </div>
+                      </div>
+
+                      {item.badge && (
+                        <span
+                          className={`text-[9px] px-2 py-0.5 rounded-full font-bold shrink-0 shadow-sm ${
+                            item.badgeColor || (isActive ? 'bg-indigo-700 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-350')
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                  </>
                 )}
               </button>
 
               {/* Floating Tooltip in Collapsed Mode */}
               {isCollapsed && (
-                <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-slate-900 text-white text-xs rounded-xl shadow-xl border border-slate-800 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-3 py-1.5 bg-slate-900 dark:bg-slate-855 text-white text-xs rounded-xl shadow-xl border border-slate-800 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
                   <div className="font-bold flex items-center gap-1.5">
                     <span>{item.label}</span>
                     {item.badge && (
@@ -242,53 +274,59 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </div>
 
-      {/* Bottom Footer Actions (Settings, Export & Dark Mode) */}
-      <div className="p-2 sm:p-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+      {/* Bottom Footer Actions (Settings, Export & Status) */}
+      <div className="p-3 border-t border-slate-200/80 dark:border-slate-800/80 space-y-3">
         {/* Architecture Status Info (When Expanded) */}
         {!isCollapsed && (
-          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 text-[10px] space-y-1.5">
-            <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 font-bold">
+          <div className="p-3 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] space-y-2">
+            <div className="flex items-center justify-between text-slate-400 font-bold">
               <span>DUAL ENGINE STATUS</span>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             </div>
-            <div className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+            <div className="flex items-center justify-between text-slate-700 dark:text-slate-350">
               <span className="font-mono">AST sqlglot</span>
               <span className="text-emerald-500 font-bold">Ready</span>
             </div>
-            <div className="flex items-center justify-between text-slate-700 dark:text-slate-300">
+            <div className="flex items-center justify-between text-slate-700 dark:text-slate-350">
               <span className="font-mono">AI LLM Fallback</span>
               <span className="text-indigo-400 font-bold">Online</span>
             </div>
           </div>
         )}
 
-        {/* Export Database Button */}
-        {onOpenExport && (
-          <button
-            id="sidebar-export-csdl-btn"
-            onClick={onOpenExport}
-            className={`w-full rounded-xl border border-indigo-200 dark:border-indigo-800/80 bg-indigo-50/70 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 transition-colors cursor-pointer flex items-center justify-center ${
-              isCollapsed ? 'p-2.5' : 'px-3 py-2.5 gap-2 text-xs font-bold text-left'
-            }`}
-            title="Export DB & Lineage (SQL, CSV, JSON)"
-          >
-            <Download className="w-4 h-4 text-indigo-500 shrink-0" />
-            {!isCollapsed && <span>Export DB &amp; Lineage</span>}
-          </button>
-        )}
+        <div className={`flex ${isCollapsed ? 'flex-col items-center' : 'flex-col'} gap-2`}>
+          {/* Export Database Button */}
+          {onOpenExport && (
+            <button
+              id="sidebar-export-csdl-btn"
+              onClick={onOpenExport}
+              className={`w-full rounded-full transition-all cursor-pointer flex items-center justify-center ${
+                isCollapsed 
+                  ? 'w-12 h-12 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50' 
+                  : 'px-4 py-2.5 gap-2.5 text-xs font-bold text-left bg-indigo-50/70 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300'
+              }`}
+              title="Export DB & Lineage (SQL, CSV, JSON)"
+            >
+              <Download className="w-4 h-4 text-indigo-500 shrink-0" />
+              {!isCollapsed && <span>Export DB &amp; Lineage</span>}
+            </button>
+          )}
 
-        {/* Settings Button */}
-        <button
-          id="sidebar-settings-btn"
-          onClick={onOpenSettings}
-          className={`w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer flex items-center justify-center ${
-            isCollapsed ? 'p-2.5' : 'px-3 py-2.5 gap-2 text-xs font-bold text-left'
-          }`}
-          title="System Settings"
-        >
-          <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
-          {!isCollapsed && <span>System Settings</span>}
-        </button>
+          {/* Settings Button */}
+          <button
+            id="sidebar-settings-btn"
+            onClick={onOpenSettings}
+            className={`w-full rounded-full border border-slate-250 dark:border-slate-800 transition-all cursor-pointer flex items-center justify-center bg-transparent ${
+              isCollapsed 
+                ? 'w-12 h-12 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 hover:text-slate-850' 
+                : 'px-4 py-2.5 gap-2.5 text-xs font-bold text-left text-slate-700 dark:text-slate-350 hover:bg-slate-100 dark:hover:bg-slate-900'
+            }`}
+            title="System Settings"
+          >
+            <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
+            {!isCollapsed && <span>System Settings</span>}
+          </button>
+        </div>
       </div>
     </aside>
   );

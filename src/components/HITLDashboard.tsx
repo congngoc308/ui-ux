@@ -102,13 +102,13 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Card 1: Pending */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
+        <div className="bg-slate-50 dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-[11px] font-bold tracking-tight uppercase truncate">
-              Chờ duyệt
+              Pending Approval
             </span>
           </div>
-          <div className="text-2xl font-extrabold text-orange-650 dark:text-orange-400">
+          <div className="text-2xl font-extrabold text-orange-600 dark:text-orange-400">
             {pendingItems.length}
           </div>
           <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-tight">
@@ -117,10 +117,10 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
         </div>
 
         {/* Card 2: Confirmed */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
+        <div className="bg-slate-50 dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-[11px] font-bold tracking-tight uppercase truncate">
-              Đã duyệt
+              Approved
             </span>
           </div>
           <div className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
@@ -132,10 +132,10 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
         </div>
 
         {/* Card 3: Rejected */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
+        <div className="bg-slate-50 dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] group">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-[11px] font-bold tracking-tight uppercase truncate">
-              Đã từ chối
+              Rejected
             </span>
           </div>
           <div className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
@@ -150,10 +150,10 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
       {/* Main Review Cards */}
       <div className="space-y-6">
         {pendingItems.length === 0 ? (
-          <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+          <div className="bg-slate-50 dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
             <CheckCircle2 className="w-12 h-12 text-purple-500 mx-auto mb-3" />
             <h3 className="text-base font-bold text-slate-900 dark:text-white font-mono">
-              Hàng đợi trống!
+              Review Queue is Empty!
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
               Không còn liên kết nào cần phê duyệt.
@@ -219,7 +219,7 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
                       </span>
                       <div className="flex flex-wrap gap-2 pt-1">
                         {item.suggestedColumnMappings.map((colMap, idx) => (
-                          <span key={idx} className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-mono text-indigo-650 dark:text-indigo-400">
+                          <span key={idx} className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-mono text-indigo-600 dark:text-indigo-400">
                             {colMap.sourceCol} &rarr; {colMap.targetCol}
                           </span>
                         ))}
@@ -293,9 +293,9 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
       {/* Edit Mapping Modal */}
       {editingItem && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 max-w-lg w-full rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
+          <div className="bg-white dark:bg-slate-900 max-w-lg w-full rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
             <h3 className="text-base font-bold font-mono text-slate-900 dark:text-white">
-              Sửa ánh xạ cột
+              Edit Column Mappings
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               Chỉnh sửa liên kết giữa các trường của hai bảng.
@@ -355,11 +355,11 @@ export const HITLDashboard: React.FC<HITLDashboardProps> = ({
 
       {/* Lịch sử Duyệt & Audit Logs */}
       {reviewedItems.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="bg-slate-50 dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
             <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-orange-500" />
-              <span>Lịch sử phê duyệt ({reviewedItems.length})</span>
+              <span>Verification History ({reviewedItems.length})</span>
             </h3>
           </div>
           

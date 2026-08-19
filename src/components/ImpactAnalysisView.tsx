@@ -248,7 +248,7 @@ export const ImpactAnalysisView: React.FC<ImpactAnalysisViewProps> = ({
             id="run-impact-analysis-btn"
             onClick={handleRunAnalysis}
             disabled={isAnalyzing}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-650/10 transition-all cursor-pointer w-full sm:w-auto shrink-0"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/10 transition-all cursor-pointer w-full sm:w-auto shrink-0"
           >
             {isAnalyzing ? (
               <>

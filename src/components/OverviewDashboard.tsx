@@ -210,77 +210,91 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 animate-fadeIn text-slate-800 dark:text-slate-100">
       
       {/* 1. Header Banner (English Title with Vietnamese Subtitle) */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-3xl">
+      <div className="bg-gradient-to-br from-indigo-50/90 via-slate-50 to-indigo-50/50 dark:from-slate-900/90 dark:via-indigo-950/20 dark:to-slate-900/90 border border-slate-200 dark:border-slate-800/80 rounded-[28px] p-6 sm:p-8 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6 transition-all duration-300">
+        <div className="space-y-3.5 max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-indigo-100/80 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-900/50 flex items-center gap-1.5 shadow-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               DATA-04 &bull; Governance Hub
             </span>
-            <span className="px-2.5 py-1 rounded-full text-[11px] text-slate-300 bg-slate-800/80 border border-slate-700">
+            <span className="px-3 py-1 rounded-full text-[11px] font-medium text-slate-750 bg-white dark:bg-slate-800 border border-slate-250 dark:border-slate-700 shadow-sm">
               Project: {projectName}
             </span>
           </div>
           
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Data Architecture &amp; Lineage Intelligence
           </h1>
           
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-350 leading-relaxed font-medium">
             Hệ thống quản trị luồng dữ liệu kết hợp phân tích cú pháp AST (sqlglot), suy luận AI Fallback và kiểm duyệt chuyên gia (HITL).
           </p>
         </div>
 
         {/* Action Shortcuts */}
-        <div className="flex flex-wrap items-center gap-3 ml-auto">
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
           <button
             onClick={() => onNavigateTab('explorer')}
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer"
+            className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-full text-xs font-bold flex items-center gap-2 shadow-sm transition-all hover:shadow duration-250 cursor-pointer"
           >
-            <GitBranch className="w-4 h-4" />
-            <span>Mở Lineage DAG</span>
+            <GitBranch className="w-4 h-4 text-white" />
+            <span>Open Lineage DAG</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onNavigateTab('ingest')}
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-2 border border-slate-700 transition-all cursor-pointer"
+            className="px-5 py-3 bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-full text-xs font-bold flex items-center gap-2 border border-slate-250 dark:border-slate-700 transition-all duration-250 cursor-pointer shadow-sm"
           >
-            <Database className="w-4 h-4 text-indigo-400" />
-            <span>db to lineage</span>
+            <Database className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+            <span>SQL Ingest Scanner</span>
           </button>
         </div>
       </div>
 
       {/* 2. Key Metrics Telemetry Grid (English Title + Vietnamese Subtitle) */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+          <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
             Key Metrics &amp; Telemetry
           </h2>
-          <span className="text-xs text-slate-400">
-            Giám sát thời gian thực
+          <span className="text-xs text-slate-400 font-semibold bg-white dark:bg-slate-900 px-3 py-1 rounded-full border border-slate-200/60 dark:border-slate-800/80 shadow-sm">
+            Real-time Monitoring
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {metricCards.map((card) => {
+            const Icon = card.icon;
+            const colors = {
+              'card-assets': { bg: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/50' },
+              'card-columns': { bg: 'bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 border border-cyan-100/50 dark:border-cyan-900/50' },
+              'card-rows': { bg: 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/50' },
+              'card-edges': { bg: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/50' },
+              'card-hitl': { bg: 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-100/50 dark:border-rose-900/50' },
+            }[card.id as 'card-assets' | 'card-columns' | 'card-rows' | 'card-edges' | 'card-hitl'] || { bg: 'bg-slate-100 dark:bg-slate-800 text-slate-500', border: 'border-slate-200' };
+
             return (
-              <div 
+              <div
                 key={card.id}
                 onClick={() => card.targetTab && onNavigateTab(card.targetTab)}
-                className={`bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all cursor-pointer group hover:shadow-md hover:scale-[1.02]`}
+                className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800/80 shadow-sm transition-all duration-200 cursor-pointer group hover:shadow hover:border-indigo-300 dark:hover:border-indigo-900 hover:bg-slate-50/50 dark:hover:bg-slate-900/30 flex flex-col justify-between h-36"
               >
-                <div className="flex items-center justify-between text-slate-400 mb-2">
-                  <span className="text-[11px] font-bold tracking-tight uppercase truncate" title={card.title}>
-                    {card.title}
-                  </span>
+                <div>
+                  <div className="flex items-center justify-between text-slate-400 gap-1.5">
+                    <span className="text-[10.5px] font-bold tracking-wider uppercase truncate text-slate-500 dark:text-slate-400" title={card.title}>
+                      {card.title}
+                    </span>
+                    <span className={`p-1.5 rounded-full shrink-0 flex items-center justify-center ${colors.bg}`}>
+                      <Icon className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+
+                  <div className="text-2xl font-extrabold text-slate-900 dark:text-white mt-2.5">
+                    {card.value}
+                  </div>
                 </div>
 
-                <div className="text-2xl font-extrabold text-slate-900 dark:text-white">
-                  {card.value}
-                </div>
-
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-tight">
+                <div className="text-[10.5px] font-medium text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-tight">
                   {card.subtitle}
                 </div>
               </div>
@@ -293,17 +307,17 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Chart 1: Data Layer Distribution */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4 transition-all hover:shadow duration-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
+            <div className="flex items-center gap-3">
+              <span className="p-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-full border border-indigo-100/50 dark:border-indigo-900/50 shrink-0">
                 <Layers className="w-4 h-4" />
               </span>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   Data Layer Distribution
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                <p className="text-[10.5px] font-medium text-slate-500 dark:text-slate-400 leading-snug">
                   Số lượng tài sản qua từng tầng kiến trúc từ Bronze đến Gold &amp; BI
                 </p>
               </div>
@@ -341,26 +355,26 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
         </div>
 
         {/* Chart 2: Inference Engine Split */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4 transition-all hover:shadow duration-200">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-3">
+              <span className="p-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-100/50 dark:border-emerald-900/50 shrink-0">
                 <Cpu className="w-4 h-4" />
               </span>
               <div>
-                <h3 className="font-mono text-sm font-bold text-slate-900 dark:text-white">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   Inference Engine Split
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                <p className="text-[10.5px] font-medium text-slate-500 dark:text-slate-400 leading-snug">
                   Tỷ lệ của Verified Flow, LLM Generated và HITL Queue
                 </p>
               </div>
             </div>
             <button
               onClick={() => onNavigateTab('ingest')}
-              className="text-[10px] font-mono text-indigo-500 hover:underline font-semibold cursor-pointer"
+              className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-[10.5px] font-bold text-indigo-600 dark:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-sm shrink-0"
             >
-              Kiểm tra &rarr;
+              Inspect
             </button>
           </div>
 
@@ -401,34 +415,34 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-around text-[10px] sm:text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-around text-[10.5px] sm:text-[11px] pt-2 border-t border-slate-100 dark:border-slate-800/80 font-medium">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span>Verified Flow ({verifiedFlowCount})</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>Verified ({verifiedFlowCount})</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
-              <span>LLM Generated ({llmGeneratedCount})</span>
+              <span className="w-2 h-2 rounded-full bg-indigo-500" />
+              <span>LLM ({llmGeneratedCount})</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span>HITL Queue ({hitlQueueCount})</span>
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span>HITL ({hitlQueueCount})</span>
             </div>
           </div>
         </div>
 
         {/* Chart 3: Column Feature Types */}
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4 transition-all hover:shadow duration-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400">
+            <div className="flex items-center gap-3">
+              <span className="p-2 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 rounded-full border border-purple-100/50 dark:border-purple-900/50 shrink-0">
                 <BrainCircuit className="w-4 h-4" />
               </span>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                   Column Feature Types
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                <p className="text-[10.5px] font-medium text-slate-500 dark:text-slate-400 leading-snug">
                   Cơ cấu kiểu dữ liệu trên toàn bộ {totalCols} trường
                 </p>
               </div>
@@ -467,19 +481,21 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
       </div>
 
       {/* 4. Layer Quality & Density */}
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4 transition-all hover:shadow duration-200">
         <div>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-mono text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-3">
+              <span className="p-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-100/50 dark:border-emerald-900/50 shrink-0">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              </span>
               <span>Layer Quality &amp; Density</span>
             </h3>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+          <p className="text-xs text-slate-500 dark:text-slate-400 pl-11">
             Điểm chất lượng trung bình theo tầng dữ liệu.
           </p>
 
-          <div className="h-52 w-full">
+          <div className="h-52 w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={qualityByLayer} margin={{ top: 10, right: 10, left: -25, bottom: 20 }}>
                 <XAxis dataKey="layer" tick={{ fontSize: 9, fill: '#94a3b8' }} angle={-25} textAnchor="end" />
@@ -493,7 +509,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
                     fontSize: '12px'
                   }} 
                 />
-                <Bar dataKey="avgQuality" name="Chất lượng" fill="#10b981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="avgQuality" name="Quality Score" fill="#10b981" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -502,17 +518,17 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
 
       {/* 5. Quick HITL Review Center (Actionable Queue) */}
       {pendingHitlCount > 0 && (
-        <div className="bg-gradient-to-br from-orange-500/10 via-slate-900 to-slate-900 border border-orange-500/30 rounded-3xl p-6 shadow-md text-white space-y-4">
+        <div className="bg-gradient-to-br from-orange-50/70 via-amber-50/40 to-orange-50/30 dark:from-orange-950/25 dark:via-slate-900/95 dark:to-slate-950 border border-orange-200/60 dark:border-orange-900/40 rounded-3xl p-6 shadow-sm text-slate-800 dark:text-slate-100 space-y-4 transition-all duration-300">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="p-2.5 rounded-2xl bg-orange-500/20 text-orange-400 border border-orange-500/30">
+              <span className="p-2.5 rounded-full bg-orange-100/80 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/50 dark:border-orange-900/40 shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </span>
               <div>
-                <h3 className="text-sm font-bold text-white">
-                  Duyệt HITL: {pendingHitlCount} liên kết
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  HITL Review: {pendingHitlCount} Links
                 </h3>
-                <p className="text-xs text-slate-300">
+                <p className="text-xs text-slate-550 dark:text-slate-400 font-medium">
                   Liên kết AI đề xuất trong Dynamic SQL/Jinja cần kiểm duyệt.
                 </p>
               </div>
@@ -520,43 +536,43 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
 
             <button
               onClick={() => onNavigateTab('hitl')}
-              className="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow cursor-pointer self-start sm:self-auto transition-all"
+              className="px-4 py-2 bg-orange-600 hover:bg-orange-500 dark:hover:bg-orange-500 text-white rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer self-start sm:self-auto transition-all"
             >
-              <span>Xem hàng đợi</span>
+              <span>Review Queue</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hitlQueue.filter(h => h.status === 'pending').slice(0, 2).map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-xs space-y-2.5"
+                className="bg-white dark:bg-slate-900 p-4.5 rounded-3xl border border-slate-200 dark:border-slate-800/80 text-xs space-y-3 shadow-sm"
               >
-                <div className="flex items-center justify-between">
-                  <div className="font-mono font-bold text-slate-200 truncate">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="font-mono font-bold text-slate-800 dark:text-slate-200 truncate">
                     `{item.sourceTable}` &rarr; `{item.targetTable}`
                   </div>
-                  <span className="text-[10px] text-orange-400 bg-orange-950/80 px-2 py-0.5 rounded border border-orange-900 shrink-0">
+                  <span className="text-[10px] font-bold text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/80 px-2.5 py-0.5 rounded-full border border-orange-200 dark:border-orange-900 shrink-0">
                     Độ tin cậy: {(item.confidence * 100).toFixed(0)}%
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 line-clamp-2">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
                   {item.reason}
                 </p>
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/60">
                   <button
                     onClick={() => onRejectHITLEdge(item)}
-                    className="px-3 py-1 bg-slate-800 hover:bg-rose-950/60 hover:text-rose-300 text-slate-300 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
+                    className="px-3.5 py-1.5 border border-slate-250 dark:border-slate-700 text-slate-700 dark:text-slate-305 rounded-full text-[11px] font-bold hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors cursor-pointer"
                   >
-                    Từ chối
+                    Reject
                   </button>
                   <button
                     onClick={() => onConfirmHITLEdge(item)}
-                    className="px-3.5 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1"
+                    className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[11px] font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-sm"
                   >
-                    <Check className="w-3 h-3" />
-                    <span>Phê duyệt</span>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Approve</span>
                   </button>
                 </div>
               </div>

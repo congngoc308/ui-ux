@@ -902,9 +902,9 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
     <div className="relative w-full h-full min-h-[calc(100vh-2rem)] flex overflow-hidden">
       
       {/* 1. Atlan-Style Control & Filter Toolbar (Top Header) */}
-      <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur p-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-[calc(100vw-6rem)]">
+      <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur p-2 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-[calc(100vw-6rem)]">
         
-        {/* View Mode Segmented Selector (Tinh gọn / Đầy đủ) */}
+        {/* View Mode Segmented Selector (Compact View / Full View) */}
         <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700">
           <button
             id="view-mode-compact-btn"
@@ -917,7 +917,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
             title="Dạng tinh gọn: Tích hợp Column-Level Lineage (CLL), hover/click để xem cột & truy vết"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Tinh gọn</span>
+            <span>Compact View</span>
           </button>
 
           <button
@@ -931,7 +931,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
             title="Dạng đầy đủ: Tích hợp Column-Level Lineage (CLL), hiển thị schema và nhấp cột để truy vết"
           >
             <List className="w-3.5 h-3.5" />
-            <span>Đầy đủ</span>
+            <span>Full View</span>
           </button>
         </div>
 
@@ -941,7 +941,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
           <input
             id="explorer-search-input"
             type="text"
-            placeholder="Tìm bảng, schema, cột, tag..."
+            placeholder="Search tables, schema, columns..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-8 pr-3 py-1.5 w-40 sm:w-56 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
@@ -1021,7 +1021,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
         {isFocusMode && (
           <div className="flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-700">
             <span className="px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold">
-              Đang cô lập
+              Isolated Mode
             </span>
             <span className="text-slate-400 text-[10px] hidden sm:inline">(Nhấp vùng trống để bỏ cô lập)</span>
           </div>
@@ -1442,7 +1442,7 @@ export const LineageExplorer: React.FC<LineageExplorerProps> = ({
               onClick={() => setSelectedEdge(null)}
               className="w-full py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-mono font-semibold transition-colors cursor-pointer"
             >
-              Đóng
+              Close
             </button>
           </div>
         </aside>

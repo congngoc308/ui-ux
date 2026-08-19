@@ -58,7 +58,7 @@ export const DataCatalogView: React.FC<DataCatalogViewProps> = ({
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm kiếm bảng, cột..."
+              placeholder="Search tables, columns..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9 pr-3 py-1.5 w-64 text-xs bg-slate-800/80 border border-slate-700 rounded-xl font-mono text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -70,30 +70,30 @@ export const DataCatalogView: React.FC<DataCatalogViewProps> = ({
             onChange={(e) => setLayerFilter(e.target.value)}
             className="px-3 py-1.5 text-xs bg-slate-800/80 border border-slate-700 rounded-xl font-mono text-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500"
           >
-            <option value="all">All Layers (Tất cả các tầng)</option>
-            <option value="source">Sources (Nguồn Raw)</option>
-            <option value="staging">Staging (Tầng chuẩn hóa)</option>
-            <option value="intermediate">Intermediate (Tầng trung gian)</option>
-            <option value="marts">Gold Marts (Tầng tổng hợp)</option>
-            <option value="bi_dashboard">BI Dashboards (Báo cáo BI)</option>
-            <option value="feature_store">Feature Store (Mô hình ML)</option>
+            <option value="all">All Layers</option>
+            <option value="source">Sources</option>
+            <option value="staging">Staging</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="marts">Gold Marts</option>
+            <option value="bi_dashboard">BI Dashboards</option>
+            <option value="feature_store">Feature Store</option>
             <option value="reverse_etl">Reverse ETL</option>
           </select>
         </div>
       </div>
 
       {/* Catalog Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 font-mono text-slate-500 dark:text-slate-400">
-                <th className="py-3 px-4">Asset Name (Tên bảng / Model)</th>
-                <th className="py-3 px-4">Schema &amp; Layer (Tầng dữ liệu)</th>
-                <th className="py-3 px-4">Quality &amp; Freshness (Chất lượng &amp; Cập nhật)</th>
-                <th className="py-3 px-4">Owner (Chủ sở hữu)</th>
-                <th className="py-3 px-4">Columns (Số cột)</th>
-                <th className="py-3 px-4 text-right">Actions (Thao tác)</th>
+              <tr className="bg-slate-100 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 font-mono text-slate-500 dark:text-slate-400">
+                <th className="py-3 px-4">Asset Name</th>
+                <th className="py-3 px-4">Schema &amp; Layer</th>
+                <th className="py-3 px-4">Quality &amp; Freshness</th>
+                <th className="py-3 px-4">Owner</th>
+                <th className="py-3 px-4">Columns</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-sans">
@@ -176,7 +176,7 @@ export const DataCatalogView: React.FC<DataCatalogViewProps> = ({
                           <td colSpan={6} className="p-4 border-t border-slate-100 dark:border-slate-800">
                             <div className="space-y-3">
                               <h4 className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
-                                Columns &amp; Types for `{node.name}` (Chi tiết danh sách cột &amp; kiểu dữ liệu):
+                                Columns &amp; Types for `{node.name}`:
                               </h4>
                               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                                 {node.columns.map((c, i) => (
